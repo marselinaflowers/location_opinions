@@ -33,4 +33,34 @@ Stream<List<Opinion>> getOpinionsStream() {
     return snapshot.docs.map((doc) => Opinion.fromMap(doc.data() as Map<String, dynamic>)).toList();
   });
 }
+
+		 upvote(String opinionId) async {	
+			if (userId == null) return;
+		 await _opinionsRef.doc(opinionId).update({
+				'upVotes': FieldValue.arrayUnion([userId]),
+			});
+		}
+    	 unUpvote(String opinionId) async {
+			if (userId == null) return;
+		 await _opinionsRef.doc(opinionId).update({
+				'upVotes': FieldValue.arrayRemove([userId]),
+			});
+		}
+
+    	 downvote(String opinionId) async {
+			if (userId == null) return;
+		 await _opinionsRef.doc(opinionId).update({
+				'downVotes': FieldValue.arrayUnion([userId]),
+			});
+		}
+  unDownvote(String opinionId) async {
+			if (userId == null) return;
+     await _opinionsRef.doc(opinionId).update({
+        'downVotes': FieldValue.arrayRemove([userId]),
+      });
+    }
+
+    delete(String opinionId) async {
+      await _opinionsRef.doc(opinionId).delete();
+    }
 }

@@ -30,7 +30,7 @@ class _HomePageState extends State<HomePage> {
             ),
           );
         },
-        tooltip: 'Create Topic',
+        tooltip: 'Share Opinion',
         child: const Icon(Icons.add),
       ),
       body: StreamBuilder<List<Opinion>>(
@@ -50,7 +50,7 @@ class _HomePageState extends State<HomePage> {
             itemCount: opinions.length,
             itemBuilder: (context, index) {
               final opinion = opinions[index];
-              return OpinionCard(opinion: opinion);
+              return OpinionCard( opinion);
             },
           );
         },

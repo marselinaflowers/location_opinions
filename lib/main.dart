@@ -21,10 +21,10 @@ class MainApp extends StatelessWidget {
   Widget build(BuildContext context) {
     return MaterialApp(
       debugShowCheckedModeBanner: false,
-      theme: ThemeData(
-      colorScheme: ColorScheme.fromSeed(seedColor: Colors.green),
-      useMaterial3: false,
-    ),
+      theme: ThemeData(useMaterial3: true,
+      brightness: Brightness.dark,
+      colorSchemeSeed: Colors.green,
+      ),
       home: AuthGate(),
       
     );
@@ -37,7 +37,7 @@ class AuthGate extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return StreamBuilder<User?>(
-      stream: FirebaseAuth.instance.userChanges(),
+      stream: FirebaseAuth.instance.authStateChanges(),
       builder: (context, snapshot) {
         if (snapshot.connectionState == ConnectionState.waiting) {
           return const Scaffold(
