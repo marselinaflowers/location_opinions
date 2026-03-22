@@ -6,6 +6,7 @@ import '../../services/auth_service.dart';
 import '../../services/comment_service.dart';
 import '../../services/opinion_service.dart';
 import '../widgets/comment_tile.dart';
+import 'package:flutter_staggered_grid_view/flutter_staggered_grid_view.dart';
 
 
 class OpinionCommentsPage extends StatefulWidget {
@@ -124,13 +125,17 @@ class _OpinionCommentsPageState extends State<OpinionCommentsPage> {
       } else {
         await _opinionService.unDownvote(_opinion.id);
       }
-      if (mounted) setState(() {});
     } else if (value == 'agree') {
       await _opinionService.agree(_opinion.id);
-      if (mounted) setState(() {});
     } else if (value == 'disagree') {
       await _opinionService.disagree(_opinion.id);
-      if (mounted) setState(() {});
+    }
+    // Always update the local _opinion after any menu action
+    final updated = await _opinionService.getOpinion(_opinion.id);
+    if (updated != null && mounted) {
+      setState(() {
+        _opinion = updated;
+      });
     }
   }
 
@@ -172,20 +177,40 @@ class _OpinionCommentsPageState extends State<OpinionCommentsPage> {
           ),
         ),
       ],
-      //DISIMPLEMENTED FEATURE - VOTE BY HOLDING
-      // const PopupMenuItem(
-      //   value: 'vote',
-      //   child: ListTile(
-      //     leading: Icon(Icons.touch_app),
-      //     title: Text('Vote (hold & release)'),
-      //     contentPadding: EdgeInsets.zero,
-      //   ),
-      // ),
     ];
 
     return Scaffold(
       appBar: AppBar(
-        title: const Text('Comments'),
+        title: TextButton(
+          style: TextButton.styleFrom(
+            foregroundColor: Theme.of(context).colorScheme.onPrimary,
+            padding: EdgeInsets.zero,
+          ),
+          onPressed: () {
+            showDialog(
+              context: context,
+              builder: (context) => AlertDialog(
+                title: const Text('Opinion Author'),
+                content: Text('by ${_opinion.author}'),
+                actions: [
+                  TextButton(
+                    onPressed: () => Navigator.of(context).pop(),
+                    child: const Text('Close'),
+                  ),
+                ],
+              ),
+            );
+          },
+          child: Text(
+            _opinion.text,
+            style: Theme.of(context).textTheme.titleLarge?.copyWith(
+                  color: Theme.of(context).colorScheme.onPrimary,
+                ),
+            maxLines: 2,
+            overflow: TextOverflow.ellipsis,
+            textAlign: TextAlign.center,
+          ),
+        ),
         actions: [
           PopupMenuButton<dynamic>(
             icon: const Icon(Icons.more_vert),
@@ -197,14 +222,7 @@ class _OpinionCommentsPageState extends State<OpinionCommentsPage> {
       body: Column(
         crossAxisAlignment: CrossAxisAlignment.stretch,
         children: [
-          Padding(
-            padding: const EdgeInsets.all(24),
-            child: Text(
-              _opinion.text,
-              style: Theme.of(context).textTheme.titleLarge,
-              textAlign: TextAlign.center,
-            ),
-          ),
+          // Opinion text is now in the AppBar title as a button
           const Divider(height: 1),
           Expanded(
             child: StreamBuilder<List<Comment>>(
@@ -220,17 +238,38 @@ class _OpinionCommentsPageState extends State<OpinionCommentsPage> {
                 if (comments.isEmpty) {
                   return const Center(child: Text('No comments yet.'));
                 }
-                return ListView.builder(
-                  itemCount: comments.length,
-                  itemBuilder: (context, index) {
-                    final c = comments[index];
-                    return CommentTile(comment: c);
-                  },
+                // Use flutter_staggered_grid_view for variable column span
+                return Padding(
+                  padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 8),
+                  child: StaggeredGrid.count(
+                    crossAxisCount: 2,
+                    mainAxisSpacing: 12,
+                    crossAxisSpacing: 12,
+                    children: [
+                      for (final c in comments)
+                        StaggeredGridTile.fit(
+                          crossAxisCellCount: c.text.length > 80 ? 2 : 1,
+                          child: Padding(
+                            padding: const EdgeInsets.all(6),
+                            child: CommentTile(
+                              comment: c,
+                              isLikedByAuthor: _opinion.upVotes.contains(c.userId),
+                              isDislikedByAuthor: _opinion.downVotes.contains(c.userId),
+                            ),
+                          ),
+                        ),
+                    ],
+                  ),
                 );
               },
             ),
           ),
         ],
+      ),
+      floatingActionButton: FloatingActionButton(
+        onPressed: _showAddCommentSheet,
+        tooltip: 'Add Comment',
+        child: Icon(Icons.edit_note), // archaic: quill/feather (edit_note is a stylized quill)
       ),
     );
   }

@@ -58,12 +58,47 @@ class _HomePageState extends State<HomePage> {
         ),
       ),
       floatingActionButton: FloatingActionButton(
-        onPressed: () {
-          Navigator.of(context).push(
-            MaterialPageRoute(
-              builder: (context) => const OpinionCreationPage(),
-            ),
+        onPressed: () async {
+          final textController = TextEditingController();
+          final result = await showDialog<String>(
+            context: context,
+            builder: (context) {
+              return AlertDialog(
+                title: const Text('Share Opinion'),
+                content: TextField(
+                  controller: textController,
+                  maxLines: null,
+                  minLines: 3,
+                  decoration: const InputDecoration(
+                    labelText: 'What say you?',
+                    border: OutlineInputBorder(),
+                  ),
+                ),
+                actions: [
+                  TextButton(
+                    onPressed: () => Navigator.of(context).pop(),
+                    child: const Text('Cancel'),
+                  ),
+                  ElevatedButton(
+                    onPressed: () {
+                      final text = textController.text.trim();
+                      if (text.isNotEmpty) {
+                        OpinionService().createOpinion(text: text);
+                        Navigator.of(context).pop(text);
+                      }
+                    },
+                    child: const Text('Share', style: TextStyle(fontWeight: FontWeight.bold)),
+                  ),
+                ],
+              );
+            },
           );
+          // Optionally show a snackbar or handle result
+          if (result != null && result.isNotEmpty) {
+            ScaffoldMessenger.of(context).showSnackBar(
+              const SnackBar(content: Text('Opinion shared!')),
+            );
+          }
         },
         tooltip: 'Share Opinion',
         child: const Icon(Icons.add),

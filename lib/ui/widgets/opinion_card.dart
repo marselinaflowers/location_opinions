@@ -103,13 +103,13 @@ class OpinionCard extends StatelessWidget {
               if (isAuthor)
                 IconButton(
                   icon: const Icon(Icons.delete),
-                  tooltip: 'Delete Topic',
+                  tooltip: 'Delete Opinion',
                   onPressed: () async {
                     final confirm = await showDialog<bool>(
                       context: context,
                       builder: (context) => AlertDialog(
-                        title: const Text('Delete Topic'),
-                        content: const Text('Are you sure you want to delete this topic? This cannot be undone.'),
+                        title: const Text('Delete Opinion'),
+                        content: const Text('Are you sure you want to delete this opinion? This cannot be undone.'),
                         actions: [
                           TextButton(
                             onPressed: () => Navigator.of(context).pop(false),

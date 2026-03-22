@@ -30,47 +30,38 @@ class _SettingsPageState extends State<SettingsPage> {
       appBar: AppBar(
         title: Text(_displayName ?? 'Settings'),
       ),
-      body: Stack(
-        children: [
-          SingleChildScrollView(
-            padding: const EdgeInsets.all(24),
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.stretch,
-              children: [
-                const Text(
-                  'Theme Color',
-                  style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
-                ),
-                const SizedBox(height: 16),
-                ColorPicker(
-                  pickerColor: _pickerColor,
-                  onColorChanged: (color) {
-                    setState(() => _pickerColor = color);
-                  },
-                  displayThumbColor: true,
-                  enableAlpha: false,
-                ),
-                const SizedBox(height: 24),
-                ElevatedButton(
-                  onPressed: () async {
-                    await ThemeColorService.instance.save(_pickerColor);
-                    if (context.mounted) {
-                      ScaffoldMessenger.of(context).showSnackBar(
-                        const SnackBar(content: Text('Color saved')),
-                      );
-                    }
-                  },
-                  child: const Text('Save'),
-                ),
-                const SizedBox(height: 80), // for bottom button spacing
-              ],
+      body: SingleChildScrollView(
+        padding: const EdgeInsets.all(24),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.stretch,
+          children: [
+            const Text(
+              'Theme Color',
+              style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
             ),
-          ),
-          Positioned(
-            left: 0,
-            right: 0,
-            bottom: 24,
-            child: Center(
+            const SizedBox(height: 16),
+            ColorPicker(
+              pickerColor: _pickerColor,
+              onColorChanged: (color) {
+                setState(() => _pickerColor = color);
+              },
+              displayThumbColor: true,
+              enableAlpha: false,
+            ),
+            const SizedBox(height: 24),
+            ElevatedButton(
+              onPressed: () async {
+                await ThemeColorService.instance.save(_pickerColor);
+                if (context.mounted) {
+                  ScaffoldMessenger.of(context).showSnackBar(
+                    const SnackBar(content: Text('Color saved')),
+                  );
+                }
+              },
+              child: const Text('Save'),
+            ),
+            const SizedBox(height: 80),
+            Center(
               child: TextButton(
                 onPressed: () async {
                   // Show the link email page, then after success, prompt for username change
@@ -133,8 +124,8 @@ class _SettingsPageState extends State<SettingsPage> {
                 child: const Text('register email to change username'),
               ),
             ),
-          ),
-        ],
+          ],
+        ),
       ),
     );
   }

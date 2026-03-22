@@ -231,13 +231,14 @@ class AliasEngine {
       "Blue",
       "Clueless",
       "Duplicate",
-      
+      "Archaic"
       
     ];
   }
 
   static List<String> get _nouns {
     return [
+
       "Antagonist",
       "Butler",
       "Cadavre",
