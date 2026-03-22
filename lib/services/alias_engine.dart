@@ -230,7 +230,8 @@ class AliasEngine {
       "Artic",
       "Blue",
       "Clueless",
-      "Dark",
+      "Duplicate",
+      
       
     ];
   }
