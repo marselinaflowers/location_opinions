@@ -60,6 +60,24 @@ Stream<List<Opinion>> getOpinionsStream() {
       });
     }
 
+  /// Agree: adds to upVotes, removes from downVotes if present
+  Future<void> agree(String opinionId) async {
+    if (userId == null) return;
+    await _opinionsRef.doc(opinionId).update({
+      'upVotes': FieldValue.arrayUnion([userId]),
+      'downVotes': FieldValue.arrayRemove([userId]),
+    });
+  }
+
+  /// Disagree: adds to downVotes, removes from upVotes if present
+  Future<void> disagree(String opinionId) async {
+    if (userId == null) return;
+    await _opinionsRef.doc(opinionId).update({
+      'downVotes': FieldValue.arrayUnion([userId]),
+      'upVotes': FieldValue.arrayRemove([userId]),
+    });
+  }
+
     delete(String opinionId) async {
       await _opinionsRef.doc(opinionId).delete();
     }

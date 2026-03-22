@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:firebase_core/firebase_core.dart';
 
 import 'firebase_options.dart';
+import 'services/theme_color_service.dart';
 import 'ui/pages/auth_page.dart';
 import 'ui/pages/home_page.dart';
 
@@ -10,7 +11,8 @@ void main() async {
   WidgetsFlutterBinding.ensureInitialized();
   await Firebase.initializeApp(
     options: DefaultFirebaseOptions.currentPlatform,
-);
+  );
+  await ThemeColorService.instance.load();
   runApp(const MainApp());
 }
 
@@ -19,14 +21,19 @@ class MainApp extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return MaterialApp(
-      debugShowCheckedModeBanner: false,
-      theme: ThemeData(useMaterial3: true,
-      brightness: Brightness.dark,
-      colorSchemeSeed: Colors.green,
-      ),
-      home: AuthGate(),
-      
+    return ValueListenableBuilder<Color>(
+      valueListenable: ThemeColorService.instance.colorNotifier,
+      builder: (context, color, _) {
+        return MaterialApp(
+          debugShowCheckedModeBanner: false,
+          theme: ThemeData(
+            // useMaterial3: true,
+            brightness: Brightness.dark,
+            colorSchemeSeed: color,
+          ),
+          home: AuthGate(),
+        );
+      },
     );
   }
 }

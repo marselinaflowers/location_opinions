@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:location_opinions/models/opinion.dart';
-import 'package:location_opinions/ui/pages/opinion_detail_page.dart';
+import 'package:location_opinions/ui/pages/opinion_comments_page.dart';
 import '../../services/auth_service.dart';
 import '../../services/opinion_service.dart';
 
@@ -22,12 +22,21 @@ class OpinionCard extends StatelessWidget {
       onTap: () {
         Navigator.of(context).push(
           MaterialPageRoute(
-            builder: (context) => OpinionDetailPage(opinion),
+            builder: (context) => OpinionCommentsPage(opinion),
           ),
         );
       },
       child: Card(
         margin: const EdgeInsets.symmetric(vertical: 8.0, horizontal: 16.0),
+        shape: RoundedRectangleBorder(
+          borderRadius: BorderRadius.circular(12),
+          side: hasUpvoted
+              ? BorderSide(
+                  color: Theme.of(context).colorScheme.primary,
+                  width: 2,
+                )
+              : BorderSide.none,
+        ),
         child: Padding(
           padding: const EdgeInsets.symmetric(vertical: 8.0, horizontal: 8.0),
           child: Row(
@@ -35,14 +44,14 @@ class OpinionCard extends StatelessWidget {
             children: [
               // Vote buttons on the left
               if (!(hasUpvoted || hasDownvoted)) ...[
-                Column(
+                Row(
+                  mainAxisSize: MainAxisSize.min,
                   children: [
                     IconButton(
                       icon: const Icon(Icons.arrow_upward),
                       tooltip: 'Upvote',
                       onPressed: () async {
                         await opinionService.upvote(opinion.id);
-                        // Optionally, trigger a UI update
                       },
                     ),
                     IconButton(
@@ -50,14 +59,26 @@ class OpinionCard extends StatelessWidget {
                       tooltip: 'Downvote',
                       onPressed: () async {
                         await opinionService.downvote(opinion.id);
-                        // Optionally, trigger a UI update
                       },
                     ),
                   ],
                 ),
                 const SizedBox(width: 8),
               ] else ...[
-                const SizedBox(width: 56), // Reserve space when buttons are hidden
+                Padding(
+                  padding: const EdgeInsets.symmetric(horizontal: 16.0),
+                  child: hasUpvoted
+                      ? const RotatedBox(
+                          quarterTurns: 1,
+                          child: Text('= )', style: TextStyle(fontSize: 28, fontFamily: 'monospace')),
+                        )
+                      : hasDownvoted
+                          ? const RotatedBox(
+                              quarterTurns: 1,
+                              child: Text('= (', style: TextStyle(fontSize: 28, fontFamily: 'monospace')),
+                            )
+                          : const SizedBox(width: 32),
+                ),
               ],
               // Opinion content (right-aligned)
               Expanded(

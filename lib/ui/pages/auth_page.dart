@@ -71,7 +71,7 @@ class _AuthPageState extends State<AuthPage> {
           builder: (context, setDialogState) {
             return AlertDialog(
               title: const Text('Suggested username'),
-              content: Text(suggestedUsername),
+              content: Text(suggestedUsername, textAlign: TextAlign.right,),
               actions: [
                 TextButton(
                   onPressed: () {
@@ -109,6 +109,7 @@ class _AuthPageState extends State<AuthPage> {
               crossAxisAlignment: CrossAxisAlignment.stretch,
               children: [
                 TextField(
+                  textAlign: TextAlign.right,
                   controller: _usernameController,
                   textInputAction: TextInputAction.done,
                   onSubmitted: (_) => _submit(),
