@@ -40,7 +40,11 @@ class _LinkEmailPageState extends State<LinkEmailPage> {
       setState(() {
         _isLoading = false;
         _errorText = error;
-        if (error == null) _sent = true;
+        if (error == null) {
+          _sent = true;
+          // Return previous username to parent for dialog
+          Navigator.of(context).pop({'change_username': true, 'previous_username': _authService.username ?? ''});
+        }
       });
     }
   }

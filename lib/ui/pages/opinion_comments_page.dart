@@ -5,6 +5,7 @@ import '../../models/opinion.dart';
 import '../../services/auth_service.dart';
 import '../../services/comment_service.dart';
 import '../../services/opinion_service.dart';
+import '../widgets/comment_tile.dart';
 
 
 class OpinionCommentsPage extends StatefulWidget {
@@ -223,10 +224,7 @@ class _OpinionCommentsPageState extends State<OpinionCommentsPage> {
                   itemCount: comments.length,
                   itemBuilder: (context, index) {
                     final c = comments[index];
-                    return ListTile(
-                      title: Text(c.text, textAlign: TextAlign.right),
-                      subtitle: Text('by ${c.author}', textAlign: TextAlign.right),
-                    );
+                    return CommentTile(comment: c);
                   },
                 );
               },
